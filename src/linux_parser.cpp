@@ -190,6 +190,27 @@ string LinuxParser::Uid(int pid[[maybe_unused]]) { return string(); }
 // REMOVE: [[maybe_unused]] once you define the function
 string LinuxParser::User(int pid[[maybe_unused]]) { return string(); }
 
+
+//const std::string kProcDirectory{"/proc/"};
+/*
+string LinuxParser::Kernel() {
+  string os, ver, kernel;
+  string line;
+  std::ifstream stream(kProcDirectory + kVersionFilename);
+  if (stream.is_open()) {
+    std::getline(stream, line);
+    std::istringstream linestream(line);
+    linestream >> os >> ver >> kernel;
+  }
+
+  return kernel;
+}
+
+
+
+
+*/
+
 // TODO: Read and return the uptime of a process
 // REMOVE: [[maybe_unused]] once you define the function
 long LinuxParser::UpTime(int pid[[maybe_unused]]) { return 0; }

@@ -15,7 +15,7 @@ using std::vector;
 int Process::Pid() { 
    // int temp_pid;
     //temp_pid = LinuxParser::Pids();
-    return _pid_proc; }
+    return pid_nr_; }
 
 // TODO: Return this process's CPU utilization
 float Process::CpuUtilization() { return 0; }
@@ -27,7 +27,14 @@ string Process::Command() { return string(); }
 string Process::Ram() { return string(); }
 
 // TODO: Return the user (name) that generated this process
-string Process::User() { return string(); }
+string Process::User() { 
+    
+    //call linux_parser - User()
+    string uid_user;
+
+    uid_user = LinuxParser::User(pid_nr_);
+    
+    return string(); }
 
 // TODO: Return the age of this process (in seconds)
 long int Process::UpTime() { return 0; }
