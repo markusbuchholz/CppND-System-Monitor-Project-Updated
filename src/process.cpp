@@ -34,7 +34,7 @@ string Process::User() {
 
     uid_user = LinuxParser::User(pid_nr_);
     
-    return string(); }
+    return uid_user; }
 
 // TODO: Return the age of this process (in seconds)
 long int Process::UpTime() { return 0; }
