@@ -2,6 +2,8 @@
 #include <unistd.h>
 #include <string>
 #include <vector>
+#include <iostream>
+#include<algorithm>
 
 #include "linux_parser.h"
 
@@ -194,52 +196,78 @@ string LinuxParser::Uid(int pid[[maybe_unused]]) { return string(); }
 // REMOVE: [[maybe_unused]] once you define the function
 string LinuxParser::User(int pid) { 
   //string uid;
-  string nr1, nr2, nr3, nr4;
+  //AAAAAAAAAAAAAAAAAAA
+  string nr1, nr2, nr3, nr4, nr1_return;
   string line;
   string key;
-  std::string pid_string = std::to_string(pid);
-  std::ifstream filestream(kProcDirectory + "/" + pid_string + kStatusFilename);
-  //if (stream.is_open()) {
-  //  std::getline(stream, line);
-   // std::istringstream linestream(line);
-   // linestream >> uid >> nr1 >> nr2 >> nr3 >> nr4;
- // }
+  std::string pid_string = std::to_string(pid); //pid);
+  std::ifstream filestream_proc(kProcDirectory + "/" + pid_string + kStatusFilename);
 
+    while (std::getline(filestream_proc, line)) {
 
-    while (std::getline(filestream, line)) {
-
-      std::istringstream linestream(line);
-      while (linestream >> key >> nr1 >>nr2 >>nr3 >>nr4 ) {
+      std::istringstream linestream_proc(line);
+      while (linestream_proc >> key >> nr1 >>nr2 >>nr3 >>nr4 ) {
         if (key == "Uid:") {
-
-          return nr1;
+          //std::cout<<"####"<<nr1<<std::endl;
+          nr1_return = nr1; // here take a value
+          //nr1_return = User_aux(nr1_return);
+          //return nr1_return;
         }
       }
     }
+    
+    nr1_return = User_aux(nr1_return);
+    return nr1_return;
+}
 
-  return nr1; }
 
+string LinuxParser::User_aux(string uid_string){
 
+//std::cout<<"AUX called"<<std::endl;
 
-//const std::string kProcDirectory{"/proc/"};
-/*
-string LinuxParser::Kernel() {
-  string os, ver, kernel;
+  string nr1, nr2, nr3, nr4, nr5, nr6;
   string line;
-  std::ifstream stream(kProcDirectory + kVersionFilename);
-  if (stream.is_open()) {
-    std::getline(stream, line);
-    std::istringstream linestream(line);
-    linestream >> os >> ver >> kernel;
-  }
+  string key;
 
-  return kernel;
+  std::ifstream filestream_proc(kPasswordPath);
+  string aux_string = ":" + uid_string + ":";
+  std::vector<std::string> temp_string;
+  string loop_string;
+  int i = 0;
+
+
+    while (std::getline(filestream_proc, line)) {
+      std::replace(line.begin(), line.end(), ':', ' ');
+
+
+      std::istringstream linestream_proc(line);
+      linestream_proc >> nr1>>nr2>> nr3>>nr4>> nr5>>nr6;
+      if(nr3 == uid_string){
+        //std::cout<<nr1<< " :: "<<uid_string << std::endl;
+      return nr1;
+      }
+
+      }
+
+      //return nr1;
+
 }
 
 
 
 
-*/
+
+
+
+//std::cout<<"222222"<<std::endl;
+ // return nr1;
+  
+   //}
+
+   
+
+
+
 
 // TODO: Read and return the uptime of a process
 // REMOVE: [[maybe_unused]] once you define the function
