@@ -24,7 +24,17 @@ float Process::CpuUtilization() { return 0; }
 string Process::Command() { return string(); }
 
 // TODO: Return this process's memory utilization
-string Process::Ram() { return string(); }
+string Process::Ram() {
+    
+    string ram_utylization, ram_utylization_mb;
+
+    ram_utylization = LinuxParser::Ram(pid_nr_);
+    int ram_mb = std::stoi(ram_utylization);
+    ram_mb=0.001 * ram_mb;
+    ram_utylization_mb = std::to_string(ram_mb); //pid);
+    
+    
+     return ram_utylization_mb; }
 
 // TODO: Return the user (name) that generated this process
 string Process::User() { 
