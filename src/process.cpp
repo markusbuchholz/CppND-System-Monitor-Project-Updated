@@ -21,20 +21,22 @@ int Process::Pid() {
 float Process::CpuUtilization() { return 0; }
 
 // TODO: Return the command that generated this process
-string Process::Command() { return string(); }
+string Process::Command() {
+    
+     return LinuxParser::Command(pid_nr_); }
 
 // TODO: Return this process's memory utilization
 string Process::Ram() {
     
     string ram_utylization, ram_utylization_mb;
 
-    ram_utylization = LinuxParser::Ram(pid_nr_);
-    int ram_mb = std::stoi(ram_utylization);
-    ram_mb=0.001 * ram_mb;
-    ram_utylization_mb = std::to_string(ram_mb); //pid);
+    //ram_utylization = LinuxParser::Ram(pid_nr_);
+    //float ram_mb = std::stof(ram_utylization);
+    //ram_mb=0.001 * ram_mb;
+    //ram_utylization_mb = std::to_string(ram_mb); //pid);
     
     
-     return ram_utylization_mb; }
+     return LinuxParser::Ram(pid_nr_); }
 
 // TODO: Return the user (name) that generated this process
 string Process::User() { 

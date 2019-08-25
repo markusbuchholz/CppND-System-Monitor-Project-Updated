@@ -108,12 +108,33 @@ float LinuxParser::MemoryUtilization(){
     }
   }
   
-  return mem_total - mem_free;
+  return (mem_total - mem_free)/mem_total;
+
 }
 
 
 // TODO: Read and return the system uptime
-long LinuxParser::UpTime() { return 0; }
+long LinuxParser::UpTime() {
+ // std::cout<<"CALLED FUNCTION"<<std::endl;
+  string line;
+  float timer1, timer2;
+  int timer12;
+  std::ifstream filestream(kProcDirectory + kUptimeFilename);
+    while (std::getline(filestream, line)) {
+
+      std::istringstream linestream(line);
+      while (linestream >> timer1 >> timer2) {
+        //std::cout<<" :: " << timer1+timer2<<std::endl;
+
+        timer12 = int(timer1);
+      return long(timer12);
+      }
+    }
+  
+  
+  return long(timer12);
+}
+
 
 // TODO: Read and return the number of jiffies for the system
 long LinuxParser::Jiffies() { return 0; }
@@ -178,7 +199,28 @@ int LinuxParser::RunningProcesses(){
 
 // TODO: Read and return the command associated with a process
 // REMOVE: [[maybe_unused]] once you define the function
-string LinuxParser::Command(int pid[[maybe_unused]]) { return string(); }
+string LinuxParser::Command(int pid) { 
+  
+  string line;
+  string key;
+  std::string pid_string = std::to_string(pid); //pid);
+  std::ifstream filestream_proc(kProcDirectory + "/" + pid_string + kCmdlineFilename);
+
+    while (std::getline(filestream_proc, line)) {
+
+      std::istringstream linestream_proc(line);
+      while (linestream_proc >> key ) {
+       
+          //std::cout<<"####"<<nr1<<std::endl;
+          //std::cout<<" cmd :: "<< key << std::endl;  
+          return key;            
+      }
+    }
+    
+    
+}
+  
+
 
 // TODO: Read and return the memory used by a process
 // REMOVE: [[maybe_unused]] once you define the function
@@ -187,6 +229,7 @@ string LinuxParser::Ram(int pid) {
   string ram_value;
   string line;
   string key;
+  float ram_value_f;
   std::string pid_string = std::to_string(pid); //pid);
   
   std::ifstream filestream(kProcDirectory + "/" + pid_string + kStatusFilename);
@@ -197,7 +240,10 @@ string LinuxParser::Ram(int pid) {
       while (linestream>> key >> ram_value) {
         if (key == "VmSize:") {
           //std::cout<<"####"<<nr1<<std::endl;
-           return ram_value; // here take a value
+          ram_value_f = std::stof(ram_value);
+          ram_value_f = 0.001024 * ram_value_f;
+
+           return std::to_string(ram_value_f); // here take a value
           //nr1_return = User_aux(nr1_return);
           //return nr1_return;
         }
@@ -205,7 +251,7 @@ string LinuxParser::Ram(int pid) {
     }
     
     //nr1_return = User_aux(nr1_return);
-    return ram_value;
+    //return ram_value;
   
 }
 
