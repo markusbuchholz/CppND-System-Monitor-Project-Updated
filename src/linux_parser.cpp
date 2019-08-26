@@ -150,7 +150,38 @@ long LinuxParser::ActiveJiffies() { return 0; }
 long LinuxParser::IdleJiffies() { return 0; }
 
 // TODO: Read and return CPU utilization
-vector<string> LinuxParser::CpuUtilization() { return {}; }
+vector<string> LinuxParser::CpuUtilization() {
+  
+    vector<int> pids;
+  DIR* directory = opendir(kProcDirectory.c_str());
+  struct dirent* file;
+  while ((file = readdir(directory)) != nullptr) {
+    // Is this a directory?
+    if (file->d_type == DT_DIR) {
+      // Is every character of the name a digit?
+      string filename(file->d_name);
+      if (std::all_of(filename.begin(), filename.end(), isdigit)) {
+        int pid = stoi(filename);
+        pids.push_back(pid);
+      }
+    }
+  }
+  closedir(directory);
+  return pids;
+}
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+   return {}; }
 
 // TODO: Read and return the total number of processes
 //int LinuxParser::TotalProcesses() { return 0; }
@@ -342,4 +373,27 @@ string LinuxParser::User_aux(string uid_string){
 
 // TODO: Read and return the uptime of a process
 // REMOVE: [[maybe_unused]] once you define the function
-long LinuxParser::UpTime(int pid[[maybe_unused]]) { return 0; }
+long LinuxParser::UpTime(int pid) {
+  
+  string nr1, nr2, nr3, nr4, nr5, nr6, nr7, nr8, nr9, nr10,nr11, nr12, nr13, nr14, nr15,nr16, nr17, nr18, nr19, nr20,nr21, nr22;
+  string line;
+  std::string pid_string = std::to_string(pid); //pid);
+  std::ifstream filestream_proc(kProcDirectory + "/" + pid_string + kStatFilename);
+
+    while (std::getline(filestream_proc, line)) {
+
+      std::istringstream linestream_proc(line);
+      while (linestream_proc >> nr1 >>nr2 >>nr3 >>nr4>> nr5>> nr6>> nr7>> nr8>> nr9>> nr10>>nr11>> nr12>> nr13>> nr14>> nr15>> nr16>> nr17>> nr18>> nr19>> nr20>>nr21>> nr22) {
+      //std::cout<<"PID UP TIME :: "<< nr22 <<std::endl;
+      long proc_uptime = std::stoi(nr22);
+      return proc_uptime;
+          //nr1_return = User_aux(nr1_return);
+          //return nr1_return;
+        }
+      }
+    
+    
+    
+}
+  
+  
