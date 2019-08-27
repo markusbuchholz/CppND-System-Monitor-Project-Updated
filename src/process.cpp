@@ -18,7 +18,18 @@ int Process::Pid() {
     return pid_nr_; }
 
 // TODO: Return this process's CPU utilization
-float Process::CpuUtilization() { return 0; }
+float Process::CpuUtilization() {
+    
+    std::vector<string> cpu_pids = LinuxParser::CpuUtilization();
+    float pid_cpu_usage;
+
+    for (int i =0; i< cpu_pids.size(); i++){
+
+        pid_cpu_usage = std::stof(cpu_pids[i]);
+        return  pid_cpu_usage;
+            }
+    
+}
 
 // TODO: Return the command that generated this process
 string Process::Command() {
