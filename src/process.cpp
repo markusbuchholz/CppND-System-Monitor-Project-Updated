@@ -3,6 +3,7 @@
 #include <sstream>
 #include <string>
 #include <vector>
+#include <iostream>
 
 #include "process.h"
 #include "linux_parser.h"
@@ -20,16 +21,16 @@ int Process::Pid() {
 // TODO: Return this process's CPU utilization
 float Process::CpuUtilization() {
     
-    std::vector<string> cpu_pids = LinuxParser::CpuUtilization();
-    float pid_cpu_usage;
+   // std::vector<string> cpu_pids = LinuxParser::CpuUtilization();
+   // float pid_cpu_usage;
 
-    for (int i =0; i< cpu_pids.size(); i++){
+  //  for (int i =0; i< cpu_pids.size(); i++){
 
-        pid_cpu_usage = std::stof(cpu_pids[i]);
-        return  pid_cpu_usage;
-            }
+    //   pid_cpu_usage = std::stof(cpu_pids[i]);
+      //  return pid_cpu_usage;
+        return LinuxParser::ActiveJiffies(pid_nr_);    }
     
-}
+
 
 // TODO: Return the command that generated this process
 string Process::Command() {
@@ -39,7 +40,7 @@ string Process::Command() {
 // TODO: Return this process's memory utilization
 string Process::Ram() {
     
-    string ram_utylization, ram_utylization_mb;
+    //string ram_utylization, ram_utylization_mb;
 
     //ram_utylization = LinuxParser::Ram(pid_nr_);
     //float ram_mb = std::stof(ram_utylization);
@@ -61,6 +62,9 @@ string Process::User() {
 
 // TODO: Return the age of this process (in seconds)
 long int Process::UpTime() { 
+    //long test = LinuxParser::UpTime(pid_nr_);
+    //std::cout<<"test ::"  <<test<<std::endl;
+
 
     return LinuxParser::UpTime(pid_nr_); }
 

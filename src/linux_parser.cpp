@@ -141,7 +141,44 @@ long LinuxParser::Jiffies() { return 0; }
 
 // TODO: Read and return the number of active jiffies for a PID
 // REMOVE: [[maybe_unused]] once you define the function
-long LinuxParser::ActiveJiffies(int pid[[maybe_unused]]) { return 0; }
+
+
+long LinuxParser::ActiveJiffies(int pid) {
+  
+  string pid_string;
+  string line;
+
+  string nr1, nr2, nr3, nr4, nr5, nr6, nr7, nr8, nr9, nr10,nr11, nr12, nr13, nr14, nr15,nr16, nr17, nr18, nr19, nr20,nr21, nr22;
+  double total_time, utime, stime, cutime, cstime, uptime, seconds,starttime, hertz, cpu_usage_pid;
+  //pid = 3905;
+
+  //std::cout<<"function :: "<<__FUNCTION__ << "called" <<std::endl;
+  pid_string = std::to_string(pid);
+  std::ifstream filestream(kProcDirectory + "/" + pid_string + kStatFilename);
+  // if(filestream.is_open()){
+  while (std::getline(filestream, line)) {
+    std::istringstream linestream_proc(line);
+    while (linestream_proc >> nr1 >>nr2 >>nr3 >>nr4>> nr5>> nr6>> nr7>> nr8>> nr9>> nr10>>nr11>> nr12>> nr13>> nr14>> nr15>> nr16>> nr17>> nr18>> nr19>> nr20>>nr21>> nr22) {
+      utime = std::stof(nr14);
+      stime = std::stof(nr15);
+      cutime = std::stof(nr16);
+      cstime = std::stof(nr17);
+      starttime = std::stof(nr22);
+      uptime = LinuxParser::UpTime();
+      hertz = sysconf(_SC_CLK_TCK);
+
+      total_time = utime + stime;
+      total_time = total_time + cutime + cstime;
+      seconds = uptime - (starttime/hertz);
+      cpu_usage_pid = 1 * ((total_time/hertz)/seconds); 
+          
+      //std::cout<<"CPU :: "<< cpu_usage_pid<<std::endl;
+      return cpu_usage_pid;      
+      }
+      
+    }
+    
+   }
 
 // TODO: Read and return the number of active jiffies for the system
 long LinuxParser::ActiveJiffies() { return 0; }
@@ -188,12 +225,12 @@ vector<string> LinuxParser::CpuUtilization() {
           cutime = std::stof(nr16);
           cstime = std::stof(nr17);
           starttime = std::stof(nr22);
-          hertz = 1.0;
+          hertz = sysconf(_SC_CLK_TCK);
 
           total_time = utime + stime;
           total_time = total_time + cutime + cstime;
           seconds = uptime - (starttime/hertz);
-          cpu_usage_pid = 100 * ((total_time/hertz)/seconds); 
+          cpu_usage_pid = 1 * ((total_time/hertz)/seconds); 
           //std::cout<<"CPU :: "<< cpu_usage_pid<<std::endl;
             
       }
@@ -201,7 +238,7 @@ vector<string> LinuxParser::CpuUtilization() {
     
     
     
-    pid_string = std::to_string(cpu_usage_pid); //pid);
+    pid_string = std::to_string(29.0);//cpu_usage_pid); //pid);
     pid_cpu.push_back(pid_string);
       }//if
     }
@@ -212,51 +249,7 @@ vector<string> LinuxParser::CpuUtilization() {
   //return pid_cpu;
 }
   
- /*
-  string line;
-  string key;
-  std::string pid_string = std::to_string(pid); //pid);
-  std::ifstream filestream_proc(kProcDirectory + "/" + pid_string + kCmdlineFilename);
 
-    while (std::getline(filestream_proc, line)) {
-
-      std::istringstream linestream_proc(line);
-      while (linestream_proc >> key ) {
-       
-          //std::cout<<"####"<<nr1<<std::endl;
-          //std::cout<<" cmd :: "<< key << std::endl;  
-          return key;            
-      }
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Processor& System::Cpu() { return cpu_; }
-
-// TODO: Return a container composed of the system's processes
-vector<Process>& System::Processes() { 
-  
-  //processes_ = LinuxParser::Pids();
-      vector<int> pids = LinuxParser::Pids();
-    //for(int pid:pids){
-      for (int i =0; i<pids.size(); i++){
-        //Process p = Process(pid);
-        processes_.push_back(pids[i]);
-    }
-  return processes_; }
-
- */ 
 
 // TODO: Read and return the total number of processes
 //int LinuxParser::TotalProcesses() { return 0; }
@@ -330,6 +323,9 @@ string LinuxParser::Command(int pid) {
 
 // TODO: Read and return the memory used by a process
 // REMOVE: [[maybe_unused]] once you define the function
+
+
+
 string LinuxParser::Ram(int pid) { 
   
   string ram_value;
@@ -346,20 +342,47 @@ string LinuxParser::Ram(int pid) {
       while (linestream>> key >> ram_value) {
         if (key == "VmSize:") {
           //std::cout<<"####"<<nr1<<std::endl;
-          ram_value_f = std::stof(ram_value);
-          ram_value_f = 0.001024 * ram_value_f;
+          ram_value_f = std::stof(ram_value)*0.001024;
+          //ram_value_f = 0.001024 * ram_value_f;
 
-           return std::to_string(ram_value_f); // here take a value
+           //return std::to_string(ram_value_f); // here take a value
           //nr1_return = User_aux(nr1_return);
           //return nr1_return;
         }
       }
     }
+     return std::to_string(ram_value_f).substr(0,7);
     
     //nr1_return = User_aux(nr1_return);
     //return ram_value;
   
 }
+
+/*
+
+//DONE:Read and return the memory used by a process
+string LinuxParser::Ram(int pid) { 
+  string line;
+  string name = "VmSize";
+  string value;
+  double result;
+  std::ifstream stream(kProcDirectory + to_string(pid)  + kStatusFilename);
+  if (stream.is_open()) {
+    while(std::getline(stream, line)){
+        if (line.compare(0, name.size(),name) == 0) {
+            std::istringstream buf(line);
+            std::istream_iterator<string> beg(buf), end;
+            vector<string> values(beg, end);
+            result = (stof(values[1])/double(1024));
+            break;
+        }
+    }
+  }
+  return to_string(result).substr(0,7);
+}
+*/
+
+
 
 // TODO: Read and return the user ID associated with a process
 // REMOVE: [[maybe_unused]] once you define the function
@@ -448,27 +471,33 @@ string LinuxParser::User_aux(string uid_string){
 
 // TODO: Read and return the uptime of a process
 // REMOVE: [[maybe_unused]] once you define the function
+
 long LinuxParser::UpTime(int pid) {
   
   string nr1, nr2, nr3, nr4, nr5, nr6, nr7, nr8, nr9, nr10,nr11, nr12, nr13, nr14, nr15,nr16, nr17, nr18, nr19, nr20,nr21, nr22;
   string line;
+  long proc_uptime;
+  pid = 13678;
   std::string pid_string = std::to_string(pid); //pid);
+  //std::cout<<"PID :: "<<pid_string<<std::endl;
   std::ifstream filestream_proc(kProcDirectory + "/" + pid_string + kStatFilename);
 
     while (std::getline(filestream_proc, line)) {
+      //std::cout<<"CALL TIME" <<std::endl;
 
       std::istringstream linestream_proc(line);
       while (linestream_proc >> nr1 >>nr2 >>nr3 >>nr4>> nr5>> nr6>> nr7>> nr8>> nr9>> nr10>>nr11>> nr12>> nr13>> nr14>> nr15>> nr16>> nr17>> nr18>> nr19>> nr20>>nr21>> nr22) {
       //std::cout<<"PID UP TIME :: "<< nr22 <<std::endl;
-      long proc_uptime = std::stoi(nr22);
+      proc_uptime = long(std::stoi(nr22)/sysconf(_SC_CLK_TCK));
       return proc_uptime;
+      
+      //return proc_uptime/sysconf(_SC_CLK_TCK);
           //nr1_return = User_aux(nr1_return);
           //return nr1_return;
         }
+        
       }
     
     
     
 }
-  
-  
