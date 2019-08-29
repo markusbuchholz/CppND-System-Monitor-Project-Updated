@@ -29,7 +29,7 @@ std::string Kernel();
 
 // CPU
 enum CPUStates {
-  kUser_ = 0,
+  kUser_ = 1, //for 0 crashes
   kNice_,
   kSystem_,
   kIdle_,
@@ -42,9 +42,9 @@ enum CPUStates {
 };
 std::vector<std::string> CpuUtilization();
 long Jiffies();
-long ActiveJiffies();
+long ActiveJiffies(std::vector<std::string> values);
 long ActiveJiffies(int pid);
-long IdleJiffies();
+long IdleJiffies(std::vector<std::string> values);
 
 // Processes
 std::string Command(int pid);

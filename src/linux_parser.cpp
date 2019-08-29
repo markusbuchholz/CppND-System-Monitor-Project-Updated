@@ -136,11 +136,12 @@ long LinuxParser::UpTime() {
 }
 
 
-// TODO: Read and return the number of jiffies for the system
-long LinuxParser::Jiffies() { return 0; }
 
 // TODO: Read and return the number of active jiffies for a PID
 // REMOVE: [[maybe_unused]] once you define the function
+
+
+
 
 
 long LinuxParser::ActiveJiffies(int pid) {
@@ -149,8 +150,8 @@ long LinuxParser::ActiveJiffies(int pid) {
   string line;
 
   string nr1, nr2, nr3, nr4, nr5, nr6, nr7, nr8, nr9, nr10,nr11, nr12, nr13, nr14, nr15,nr16, nr17, nr18, nr19, nr20,nr21, nr22;
-  double total_time, utime, stime, cutime, cstime, uptime, seconds,starttime, hertz, cpu_usage_pid;
-  //pid = 3905;
+  double total_time, utime, stime, cutime, cstime, uptime, seconds,starttime, hertz, pid_cpu_usage;
+  //pid = 16737;
 
   //std::cout<<"function :: "<<__FUNCTION__ << "called" <<std::endl;
   pid_string = std::to_string(pid);
@@ -170,10 +171,10 @@ long LinuxParser::ActiveJiffies(int pid) {
       total_time = utime + stime;
       total_time = total_time + cutime + cstime;
       seconds = uptime - (starttime/hertz);
-      cpu_usage_pid = 1 * ((total_time/hertz)/seconds); 
+      pid_cpu_usage = 1 * ((total_time/hertz)/seconds); 
           
-      //std::cout<<"CPU :: "<< cpu_usage_pid<<std::endl;
-      return cpu_usage_pid;      
+      //std::cout<<"CPU :: "<< pid_cpu_usage<<std::endl;
+      return pid_cpu_usage;      
       }
       
     }
@@ -181,72 +182,55 @@ long LinuxParser::ActiveJiffies(int pid) {
    }
 
 // TODO: Read and return the number of active jiffies for the system
-long LinuxParser::ActiveJiffies() { return 0; }
+long LinuxParser::Jiffies() { 
+  std::vector<std::string> values = LinuxParser::CpuUtilization();
+  float activeTime = LinuxParser::ActiveJiffies(values);
+  float idleTime = LinuxParser::IdleJiffies(values);  
+  return activeTime+idleTime; 
+}
 
 // TODO: Read and return the number of idle jiffies for the system
-long LinuxParser::IdleJiffies() { return 0; }
+// DONE: Read and return the number of active jiffies for the system
+long LinuxParser::ActiveJiffies(std::vector<std::string> values) { 
+ // std::cout<<"size of vector ::" <<values.size()<<std::endl;
+ // return 10.0;}
+  
+ long active_jiffies_value =  std::stof(values[CPUStates::kUser_]) +
+            std::stof(values[CPUStates::kNice_]) +
+            std::stof(values[CPUStates::kSystem_]) +
+            std::stof(values[CPUStates::kIRQ_]) +
+            std::stof(values[CPUStates::kSoftIRQ_]) +
+            std::stof(values[CPUStates::kSteal_]) +
+            std::stof(values[CPUStates::kGuest_]) +
+            std::stof(values[CPUStates::kGuestNice_]);
+return active_jiffies_value;
+}
+
+// DONE: Read and return the number of idle jiffies for the system
+long LinuxParser::IdleJiffies(std::vector<std::string> values) { 
+  return (std::stof(values[CPUStates::kIdle_]) +
+            std::stof(values[CPUStates::kIOwait_])); 
+}
 
 
 //https://stackoverflow.com/questions/16726779/how-do-i-get-the-total-cpu-usage-of-an-application-from-proc-pid-stat/16736599#16736599
 
 // TODO: Read and return CPU utilization
-vector<string> LinuxParser::CpuUtilization() {
-
-  vector<string> pid_cpu;
-  string pid_string;
-  int pid;
+vector<string> LinuxParser::CpuUtilization() { 
   string line;
-  DIR* directory = opendir(kProcDirectory.c_str());
-  struct dirent* file;
-  string nr1, nr2, nr3, nr4, nr5, nr6, nr7, nr8, nr9, nr10,nr11, nr12, nr13, nr14, nr15,nr16, nr17, nr18, nr19, nr20,nr21, nr22;
-  double total_time, utime, stime, cutime, cstime, uptime, seconds,starttime, hertz, cpu_usage_pid;
-
-
-  //std::cout<<"function :: "<<__FUNCTION__ << "called" <<std::endl;
-
-  while ((file = readdir(directory)) != nullptr) {
-    // Is this a directory?
-    if (file->d_type == DT_DIR) {
-      // Is every character of the name a digit?
-      string filename(file->d_name);
-      if (std::all_of(filename.begin(), filename.end(), isdigit)) {
-        
-          pid = stoi(filename);
-          std::string pid_string = std::to_string(pid); //pid);
-          //std::cout<<"PID :: "<<pid_string<<std::endl;
-          std::ifstream filestream(kProcDirectory + "/" + pid_string + kStatFilename);
-          while (std::getline(filestream, line)) {
-
-          std::istringstream linestream_proc(line);
-          while (linestream_proc >> nr1 >>nr2 >>nr3 >>nr4>> nr5>> nr6>> nr7>> nr8>> nr9>> nr10>>nr11>> nr12>> nr13>> nr14>> nr15>> nr16>> nr17>> nr18>> nr19>> nr20>>nr21>> nr22) {
-            //totatl_time, utime, stime, cutime, cstime, uptime, seconds,starttimer, hertz, cpu_usage_pid;
-          utime = std::stof(nr14);
-          stime = std::stof(nr15);
-          cutime = std::stof(nr16);
-          cstime = std::stof(nr17);
-          starttime = std::stof(nr22);
-          hertz = sysconf(_SC_CLK_TCK);
-
-          total_time = utime + stime;
-          total_time = total_time + cutime + cstime;
-          seconds = uptime - (starttime/hertz);
-          cpu_usage_pid = 1 * ((total_time/hertz)/seconds); 
-          //std::cout<<"CPU :: "<< cpu_usage_pid<<std::endl;
-            
-      }
-    }
-    
-    
-    
-    pid_string = std::to_string(29.0);//cpu_usage_pid); //pid);
-    pid_cpu.push_back(pid_string);
-      }//if
-    }
+  std::ifstream stream(kProcDirectory + kStatFilename);
+  string name = "cpu";  
+  if (stream.is_open()) {
+    while (std::getline(stream, line)) {
+        if (line.compare(0, name.size(),name) == 0) {
+            std::istringstream buf(line);
+            std::istream_iterator<string> beg(buf), end;
+            vector<string> values(beg, end);
+            return values;
+        }
+    }  
   }
-  closedir(directory);
-  return pid_cpu;
-
-  //return pid_cpu;
+  return {}; 
 }
   
 
@@ -477,7 +461,7 @@ long LinuxParser::UpTime(int pid) {
   string nr1, nr2, nr3, nr4, nr5, nr6, nr7, nr8, nr9, nr10,nr11, nr12, nr13, nr14, nr15,nr16, nr17, nr18, nr19, nr20,nr21, nr22;
   string line;
   long proc_uptime;
-  pid = 13678;
+  //pid = 13678;
   std::string pid_string = std::to_string(pid); //pid);
   //std::cout<<"PID :: "<<pid_string<<std::endl;
   std::ifstream filestream_proc(kProcDirectory + "/" + pid_string + kStatFilename);

@@ -22,13 +22,14 @@ int Process::Pid() {
 float Process::CpuUtilization() {
     
    // std::vector<string> cpu_pids = LinuxParser::CpuUtilization();
-   // float pid_cpu_usage;
+    long pid_cpu_usage = LinuxParser::ActiveJiffies(pid_nr_);
+    //std::cout<<"usage ::" << pid_cpu_usage << std::endl;
 
   //  for (int i =0; i< cpu_pids.size(); i++){
 
     //   pid_cpu_usage = std::stof(cpu_pids[i]);
       //  return pid_cpu_usage;
-        return LinuxParser::ActiveJiffies(pid_nr_);    }
+        return pid_cpu_usage;    }
     
 
 
