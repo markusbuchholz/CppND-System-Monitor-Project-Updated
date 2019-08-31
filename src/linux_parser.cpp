@@ -120,6 +120,7 @@ long LinuxParser::UpTime() {
   float timer1, timer2;
   int timer12;
   std::ifstream filestream(kProcDirectory + kUptimeFilename);
+  if (filestream.is_open()) {
     while (std::getline(filestream, line)) {
 
       std::istringstream linestream(line);
@@ -131,7 +132,7 @@ long LinuxParser::UpTime() {
       }
     }
   
-  
+  }
   return long(timer12);
 }
 
@@ -152,7 +153,7 @@ long LinuxParser::ActiveJiffies(int pid) {
   //std::cout<<"function :: "<<__FUNCTION__ << "called" <<std::endl;
   pid_string = std::to_string(pid);
   std::ifstream filestream(kProcDirectory + "/" + pid_string + kStatFilename);
-  // if(filestream.is_open()){
+   if(filestream.is_open()){
   while (std::getline(filestream, line)) {
     std::istringstream linestream_proc(line);
     while (linestream_proc >> nr1 >>nr2 >>nr3 >>nr4>> nr5>> nr6>> nr7>> nr8>> nr9>> nr10>>nr11>> nr12>> nr13>> nr14>> nr15>> nr16>> nr17>> nr18>> nr19>> nr20>>nr21>> nr22) {
@@ -174,7 +175,7 @@ long LinuxParser::ActiveJiffies(int pid) {
       }
       
     }
-    
+   }
    }
 
 // DONE: Read and return the number of active jiffies for the system
@@ -309,7 +310,7 @@ string LinuxParser::Command(int pid) {
   string key;
   std::string pid_string = std::to_string(pid); 
   std::ifstream filestream_proc(kProcDirectory + "/" + pid_string + kCmdlineFilename);
-
+if (filestream_proc.is_open()) {
     while (std::getline(filestream_proc, line)) {
 
       std::istringstream linestream_proc(line);
@@ -318,7 +319,7 @@ string LinuxParser::Command(int pid) {
           return key;            
       }
     }
-    
+} 
     
 }
   
@@ -336,6 +337,7 @@ string LinuxParser::Ram(int pid) {
   std::string pid_string = std::to_string(pid); //pid);
   
   std::ifstream filestream(kProcDirectory + "/" + pid_string + kStatusFilename);
+  if (filestream.is_open()) {
 
     while (std::getline(filestream, line)) {
 
@@ -350,7 +352,7 @@ string LinuxParser::Ram(int pid) {
     }
      return std::to_string(ram_value_f).substr(0,7);
     
-
+  }
   
 }
 
