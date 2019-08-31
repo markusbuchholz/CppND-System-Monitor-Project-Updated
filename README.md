@@ -1,8 +1,7 @@
 # CppND-System-Monitor
 
-Starter code for System Monitor Project in the Object Oriented Programming Course of the [Udacity C++ Nanodegree Program](https://www.udacity.com/course/c-plus-plus-nanodegree--nd213). 
+This ropository inccludes source code for System Monitor Project in the Object Oriented Programming Course of the [Udacity C++ Nanodegree Program](https://www.udacity.com/course/c-plus-plus-nanodegree--nd213). Developed System Monitor application can be considered as tiny version of HTOP. Application can be moifies and further developed by the other functions, instyresting for final user.
 
-Follow along with the classroom lesson to complete the project!
 
 ![System Monitor](images/monitor.png)
 
@@ -14,9 +13,7 @@ You are welcome to develop this project on your local machine, and you are not r
 ## ncurses
 [ncurses](https://www.gnu.org/software/ncurses/) is a library that facilitates text-based graphical output in the terminal. This project relies on ncurses for display output.
 
-Within the Udacity Workspace, `.student_bashrc` automatically installs ncurses every time you launch the Workspace.
-
-If you are not using the Workspace, install ncurses within your own Linux environment: `sudo apt install libncurses5-dev libncursesw5-dev`
+ Install ncurses within your own Linux environment: `sudo apt install libncurses5-dev libncursesw5-dev`
 
 ## Make
 This project uses [Make](https://www.gnu.org/software/make/). The Makefile has four targets:
@@ -34,8 +31,3 @@ This project uses [Make](https://www.gnu.org/software/make/). The Makefile has f
 3. Run the resulting executable: `./build/monitor`
 ![Starting System Monitor](images/starting_monitor.png)
 
-4. Follow along with the lesson.
-
-5. Implement the `System`, `Process`, and `Processor` classes, as well as functions within the `LinuxParser` namespace.
-
-6. Submit!
