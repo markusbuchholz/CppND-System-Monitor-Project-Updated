@@ -23,8 +23,9 @@ Processor& System::Cpu() { return cpu_; }
 vector<Process>& System::Processes() { 
   
       vector<int> pids = LinuxParser::Pids();
+      int pids_size= pids.size();
    
-      for (int i =0; i<pids.size(); i++){
+      for (auto i =0; i<pids_size; i++){
        
         processes_.push_back(pids[i]);
     }
@@ -65,6 +66,6 @@ int System::TotalProcesses() {
 // DONE: Return the number of seconds since the system started running
 int long System::UpTime() {
 
-  long system_uptime= LinuxParser::UpTime();
+ // long system_uptime= LinuxParser::UpTime();
   //std::cout<<"function called :: "<<system_uptime<<std::endl;
    return LinuxParser::UpTime();} 

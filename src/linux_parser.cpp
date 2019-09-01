@@ -176,6 +176,7 @@ long LinuxParser::ActiveJiffies(int pid) {
       
     }
    }
+   return 0;
    }
 
 // DONE: Read and return the number of active jiffies for the system
@@ -254,7 +255,7 @@ vector <string> LinuxParser::CpuUtilization() {
    
 
   }
-  
+  return {};
 }
 
 // DONE: Read and return the total number of processes
@@ -320,7 +321,7 @@ if (filestream_proc.is_open()) {
       }
     }
 } 
-    
+ return 0;   
 }
   
 // DONE: Read and return the memory used by a process
@@ -353,7 +354,7 @@ string LinuxParser::Ram(int pid) {
      return std::to_string(ram_value_f).substr(0,7);
     
   }
-  
+  return 0;
 }
 
 // DONE: Read and return the user associated with a process
@@ -408,7 +409,7 @@ string LinuxParser::Uid(string pid_string) {
 
       }
 
-
+return 0;
 
 }
 
@@ -438,6 +439,6 @@ long LinuxParser::UpTime(int pid) {
         
       }
     
-    
+    return 0;
     
 }
