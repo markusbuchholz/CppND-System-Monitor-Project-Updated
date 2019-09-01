@@ -147,7 +147,7 @@ long LinuxParser::ActiveJiffies(int pid) {
 
   string nr1, nr2, nr3, nr4, nr5, nr6, nr7, nr8, nr9, nr10,nr11, nr12, nr13, nr14, nr15,nr16, nr17, nr18, nr19, nr20,nr21, nr22;
   double total_time, utime, stime, cutime, cstime, uptime, seconds,starttime, hertz, pid_cpu_usage;
-  //pid = 16365;
+  //pid = 4048;
   //pid = 2012;
 
   //std::cout<<"function :: "<<__FUNCTION__ << "called" <<std::endl;
@@ -168,7 +168,7 @@ long LinuxParser::ActiveJiffies(int pid) {
       total_time = utime + stime;
       total_time = total_time + cutime + cstime;
       seconds = uptime - (starttime/hertz);
-      pid_cpu_usage = 100 * ((total_time/hertz)/seconds); 
+      pid_cpu_usage = 1000 * ((total_time/hertz)/seconds); 
           
       //std::cout<<"CPU :: "<< pid_cpu_usage<<std::endl;
       return pid_cpu_usage;      
@@ -321,7 +321,8 @@ if (filestream_proc.is_open()) {
       }
     }
 } 
- return 0;   
+   
+ return string(); 
 }
   
 // DONE: Read and return the memory used by a process
@@ -354,7 +355,7 @@ string LinuxParser::Ram(int pid) {
      return std::to_string(ram_value_f).substr(0,7);
     
   }
-  return 0;
+  return string();
 }
 
 // DONE: Read and return the user associated with a process
@@ -409,7 +410,7 @@ string LinuxParser::Uid(string pid_string) {
 
       }
 
-return 0;
+return string();
 
 }
 
